@@ -42,7 +42,7 @@ Note that list structure is not conscells but linked list. Lexical scope is supp
 
 ## mcelisp-json-pp.scm
 
-`mcelisp-json-pp.scm` is generated from `"mcelisp"` of `mcelisp.json` by using JSON-to-S generator and slib's pretty-print. It can be executed on a Scheme interpreter as a Meta-Circular Evaluator.
+`mcelisp-json-pp.scm` is generated from `"mcelisp"` of `mcelisp.json` by using JSON-to-S generator and slib's pretty-print. It can be executed on a Scheme interpreter as a Meta-Circular Evaluator. See `mcelisp-json-to-S-pp-Gauche.scm` for details of generating.
 
 ## Licence
 

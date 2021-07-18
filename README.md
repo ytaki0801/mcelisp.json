@@ -38,7 +38,7 @@ Note that list structure is not conscells but linked list. Lexical scope is supp
 
 ## mcelisp-json-node.js
 
-`mcelisp-json-node.js` is a reference implementation of mcelisp.json, supposed to run on Node.js. It can run not only the above example but also `mcelisp.json`. See comments in the source codes.
+`mcelisp-json-node.js` is a reference implementation of mcelisp.json, supposed to run on Node.js. It can run not only the above example but also `mcelisp.json` itself. See comments in the source codes.
 
 ## Licence
 

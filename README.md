@@ -40,6 +40,10 @@ Note that list structure is not conscells but linked list. Lexical scope is supp
 
 `mcelisp-json-node.js` is a reference implementation of `mcelisp.json` to run on Node.js. It can run not only the above example but also `mcelisp.json` itself. See comments in the source codes for details.
 
+## mcelisp-json-pp.scm
+
+`mcelisp-json-pp.scm` is generated from `"mcelisp"` of `mcelisp.json` by using JSON-to-S generator and slib's pretty-print. It can be executed on a Scheme interpreter as a Meta-Circular Evaluator.
+
 ## Licence
 
 The codes in this repository are licensed under [CC0](https://creativecommons.org/publicdomain/zero/1.0/).

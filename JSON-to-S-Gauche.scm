@@ -6,7 +6,9 @@
 (define (main args)
   (if (null? (cdr args)) (print "Filename is needed.")
       (pretty-print
-       (parameterize
-	   ((json-array-handler
-	     (cut map (lambda (x) (if (string? x) (string->symbol x) x)) <>)))
-	 (call-with-input-file (cadr args) parse-json)))))
+       (let ((r (parameterize
+		    ((json-array-handler
+		      (cut map (lambda (x) (if (string? x) (string->symbol x) x)) <>)))
+		  (call-with-input-file (cadr args) parse-json))))
+	 (if (null? (cddr args)) r
+	     (cdr (assoc (caddr args) r)))))))

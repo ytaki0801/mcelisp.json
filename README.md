@@ -40,17 +40,21 @@ Note that list structure is not conscells but linked list. Lexical scope is supp
 
 `mcelisp-json-node.js` is a reference implementation of `mcelisp.json` to run on Node.js. It can run not only the above example but also `mcelisp.json` itself. See comments in the source codes for details.
 
-## mcelisp-json-pp.scm
+## mcelisp-json-pp.scm, JSON-to-S-Gauche.scm, S-to-JSON-Gauche.scm
 
-`mcelisp-json-pp.scm` is generated from `"mcelisp"` of `mcelisp.json` by using SRFI-180's `json-read` and slib's pretty-print. It can be executed on a Scheme interpreter as a Meta-Circular Evaluator. See `mcelisp-json-to-S-pp-Gauche.scm` for details of generating.
+`mcelisp-json-pp.scm` is generated from `"mcelisp"` in `mcelisp.json` by using [Gauche](http://practical-scheme.net/gauche/)'s JSON library and slib's pretty-print, `JSON-to-S-Gauche.scm`. It can be executed on a Scheme interpreter as a Meta-Circular Evaluator.
 
-## S-to-JSON-Gauche.scm
+```
+$ ./JSON-to-S-Gauche.scm mcelisp.json mcelisp | chibi-scheme
+> ((O) (O O) (O O O) (O O O O) (O O O O O))
+> $
+```
 
-`S-to-JSON-Gauche.scm` is a simple S-to-JSON generator by using SRFI-180's `json-write` of [Gauche](http://practical-scheme.net/gauche/).
+`S-to-JSON-Gauche.scm` is a simple S-to-JSON generator by using Gauche's JSON library, same as `JSON-to-S-Gauche.scm`.
 
 ## mcelisp-json.c
 
-`mcelisp-json.c` is a reference implementation of `mcelisp.json` in C with JSON parser/serializer ["parson"](https://github.com/kgabis/parson/). You need the files `parson.c` and `parson.h` in the repository to compile and run.
+`mcelisp-json.c` is a reference implementation of `mcelisp.json` in C with JSON parser/serializer ["parson"](https://github.com/kgabis/parson/). You need the files `parson.c` and `parson.h` in the library to compile and run.
 
 ## Licence
 

@@ -42,7 +42,15 @@ Note that list structure is not conscells but linked list. Lexical scope is supp
 
 ## mcelisp-json-pp.scm
 
-`mcelisp-json-pp.scm` is generated from `"mcelisp"` of `mcelisp.json` by using JSON-to-S generator and slib's pretty-print. It can be executed on a Scheme interpreter as a Meta-Circular Evaluator. See `mcelisp-json-to-S-pp-Gauche.scm` for details of generating.
+`mcelisp-json-pp.scm` is generated from `"mcelisp"` of `mcelisp.json` by using SRFI-180's `json-read` and slib's pretty-print. It can be executed on a Scheme interpreter as a Meta-Circular Evaluator. See `mcelisp-json-to-S-pp-Gauche.scm` for details of generating.
+
+## S-to-JSON-Gauche.scm
+
+`S-to-JSON-Gauche.scm` is a simple S-to-JSON generator by using SRFI-180's `json-write` of [Gauche](http://practical-scheme.net/gauche/).
+
+## mcelisp-json.c
+
+`mcelisp-json.c` is a reference implementation of `mcelisp.json` in C with JSON parser/serializer ["parson"](https://github.com/kgabis/parson/). You need the files `parson.c` and `parson.h` in the repository to compile and run.
 
 ## Licence
 

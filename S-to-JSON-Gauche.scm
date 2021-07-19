@@ -11,8 +11,11 @@
       (cons (lists->vector (car L))
             (lists->vector-p (cdr L)))))
 
-(call-with-input-file
-  "./S.scm"
-  (lambda (p) (json-write (lists->vector (read p)))))
-(newline)
+(define (main args)
+  (if (null? (cdr args)) (print "Filename is needed.")
+      (begin
+	(call-with-input-file (cadr args)
+	  (lambda (p) (json-write (lists->vector (read p)))))
+	(newline))))
+
 

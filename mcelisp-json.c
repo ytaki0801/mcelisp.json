@@ -9,125 +9,91 @@
  * This program requires the following JSON library.
  * https://github.com/kgabis/parson/
  *
- * "parson.c" and parson.h" are needed to compile.
+ * "parson.c" and "parson.h" are needed to compile.
  * $ cc -o mcelisp-json mcelisp-json.c parson.c
  */
 
 #include <stdio.h>
-
 #include "parson.h"
 
+#define JV JSON_Value
+#define JA JSON_Array
+#define JO JSON_Object
+#define JR json_array
+#define JT json_array_get_count
+#define JL json_array_get_value
+#define JW json_array_get_wrapping_value
+#define JM json_array_remove
+#define JD json_array_append_value
+#define JJ json_object
+#define JG json_object_get_array
+#define JF json_parse_file
+#define JP json_parse_string
+#define JZ json_serialize_to_string
+#define JY json_type
+#define JC json_value_deep_copy
+#define JE json_value_equals
 #define TRUE  (json_parse_string("\"#t\""))
 #define FALSE (json_parse_string("\"#f\""))
 #define EMPTY  (json_parse_string("[]"))
 
-JSON_Value *car(JSON_Value *s)
-{
-  return json_value_deep_copy(json_array_get_value(json_array(s), 0));
-}
-JSON_Value *cdr(JSON_Value *s)
-{
-  JSON_Array *d = json_array(json_value_deep_copy(s));
-  json_array_remove(d, 0);
-  return json_array_get_wrapping_value(d);
-}
-JSON_Value *cons(JSON_Value *a, JSON_Value *d)
-{
-  JSON_Array *r = json_array(EMPTY);
-  json_array_append_value(r, json_value_deep_copy(a));
-  JSON_Value *d1;
-  for (int i = 0; i < json_array_get_count(json_array(d)); i++) {
-    d1 = json_value_deep_copy(json_array_get_value(json_array(d), i));
-    json_array_append_value(r, d1);
-  }
-  return json_array_get_wrapping_value(r);
-}
-int null(JSON_Value *a) { return json_array_get_count(json_array(a)) == 0; }
-int pair(JSON_Value *s) { if (json_type(s) == 5 && !null(s)) return 1; else return 0; }
-int eq(JSON_Value *a, JSON_Value *b)
-{
-  if (!pair(a) && !pair(b)) return json_value_equals(a, b); else return 0;
-}
+JV *car(JV *s) { return JC(JL(JR(s), 0)); }
+JV *cdr(JV *s) { JA *d = JR(JC(s)); JM(d, 0); return JW(d); }
+JV *cons(JV *a, JV *d)
+{ JA *r = JR(EMPTY); JD(r, JC(a)); JV *d1;
+  for (int i = 0; i < JT(JR(d)); i++) { d1 = JC(JL(JR(d), i)); JD(r, d1); }
+  return JW(r); }
+int null(JV *a) { return JT(JR(a)) == 0; }
+int pair(JV *s) { if (JY(s) == 5 && !null(s)) return 1; else return 0; }
+int eq(JV *a, JV *b) { if(!pair(a)&&!pair(b)) return JE(a,b); else return 0; }
 
-JSON_Value *APY(JSON_Value *F, JSON_Value *A);
-JSON_Value *APD(JSON_Value *A, JSON_Value *B);
-JSON_Value *PLS(JSON_Value *A, JSON_Value *B);
-JSON_Value *GVP(JSON_Value *K, JSON_Value *V);
-JSON_Value *ECD(JSON_Value *P, JSON_Value *E);
-JSON_Value *EAG(JSON_Value *A, JSON_Value *E);
-
-JSON_Value *EVL(JSON_Value *S, JSON_Value *E)
-{
-  if (pair(S)) {
-    if      (eq(car(S), json_parse_string("\"quote\"")))
-      return car(cdr(S));
-    else if (eq(car(S), json_parse_string("\"cond\"")))
-      return ECD(cdr(S), E);
-    else if (eq(car(S), json_parse_string("\"lambda\"")))
-      return APD(S, cons(E, EMPTY));
+JV *APY(JV *F, JV *A); JV *APD(JV *A, JV *B); JV *PLS(JV *A, JV *B);
+JV *GVP(JV *K, JV *V); JV *ECD(JV *P, JV *E); JV *EAG(JV *A, JV *E);
+JV *EVL(JV *S, JV *E)
+{ if (pair(S)) {
+    if      (eq(car(S), JP("\"quote\""))) return car(cdr(S));
+    else if (eq(car(S), JP("\"cond\""))) return ECD(cdr(S), E);
+    else if (eq(car(S), JP("\"lambda\""))) return APD(S, cons(E, EMPTY));
     else return APY(EVL(car(S), E), EAG(cdr(S), E));
-  } else return GVP(S, E);
-}
-JSON_Value *APY(JSON_Value *F, JSON_Value *A)
-{
-  if (pair(F)) {
+  } else return GVP(S, E); }
+JV *APY(JV *F, JV *A)
+{ if (pair(F)) 
     return EVL(car(cdr(cdr(F))),
 	       APD(PLS(car(cdr(F)), A), car(cdr(cdr(cdr(F))))));
-  } else {
-    if      (eq(F, json_parse_string("\"car\""))) return car(car(A));
-    else if (eq(F, json_parse_string("\"cdr\""))) return cdr(car(A));
-    else if (eq(F, json_parse_string("\"cons\"")))
-      return cons(car(A), car(cdr(A)));
-    else if (eq(F, json_parse_string("\"eq?\""))) {
+  else {
+    if      (eq(F, JP("\"car\""))) return car(car(A));
+    else if (eq(F, JP("\"cdr\""))) return cdr(car(A));
+    else if (eq(F, JP("\"cons\""))) return cons(car(A), car(cdr(A)));
+    else if (eq(F, JP("\"eq?\""))) {
       if (eq(car(A), car(cdr(A)))) return TRUE; else FALSE;
-    } else if (eq(F, json_parse_string("\"pair?\""))) {
+    } else if (eq(F, JP("\"pair?\""))) {
       if (pair(car(A))) return TRUE; else FALSE;
-    } else return FALSE;
-  }
-}
-JSON_Value *APD(JSON_Value *A, JSON_Value *B)
-{
-  if (null(A)) return B; else cons(car(A),APD(cdr(A),B));
-}
-JSON_Value *PLS(JSON_Value *A, JSON_Value *B)
-{
-  if (null(A)) return EMPTY; else if (null(B)) return EMPTY;
-  else return cons(car(A), cons(car(B), PLS(cdr(A), cdr(B))));
-}
-JSON_Value *GVP(JSON_Value *K, JSON_Value *V)
-{
-  if (null(V)) return EMPTY; else if (eq(K, car(V))) return car(cdr(V));
-  else return GVP(K, cdr(cdr(V)));
-}
-JSON_Value *ECD(JSON_Value *P, JSON_Value *E)
-{
-  if (null(P)) return EMPTY;
-  else if (eq(car(car(P)), json_parse_string("\"else\"")))
-    return EVL(car(cdr(car(P))), E);
-  else if (json_value_equals(EVL(car(car(P)), E), TRUE))
-    return EVL(car(cdr(car(P))), E);
-  else return ECD(cdr(P), E);
-}
-JSON_Value *EAG(JSON_Value *A, JSON_Value *E)
-{
-  if (null(A)) return EMPTY;
-  else return cons(EVL(car(A), E), EAG(cdr(A), E));
-}
+    } else return FALSE; } }
+JV *APD(JV *A, JV *B)
+{ if (null(A)) return B; else cons(car(A),APD(cdr(A),B)); }
+JV *PLS(JV *A, JV *B)
+{ if (null(A)) return EMPTY; else if (null(B)) return EMPTY;
+  else return cons(car(A), cons(car(B), PLS(cdr(A), cdr(B)))); }
+JV *GVP(JV *K, JV *V)
+{ if (null(V)) return EMPTY; else if (eq(K, car(V))) return car(cdr(V));
+  else return GVP(K, cdr(cdr(V))); }
+JV *ECD(JV *P, JV *E)
+{ if (null(P)) return EMPTY;
+  else if (eq(car(car(P)), JP("\"else\""))) return EVL(car(cdr(car(P))), E);
+  else if (JE(EVL(car(car(P)), E), TRUE)) return EVL(car(cdr(car(P))), E);
+  else return ECD(cdr(P), E); }
+JV *EAG(JV *A, JV *E)
+{ if (null(A)) return EMPTY;
+  else return cons(EVL(car(A), E), EAG(cdr(A), E)); } 
 
 int main(void)
-{
-  JSON_Value *ienv = json_parse_string(" \
-    [\"car\",\"car\",\"cdr\",\"cdr\",\"cons\",\"cons\", \
-     \"eq?\",\"eq?\",\"pair?\",\"pair?\"]");
-
+{ JV *ienv = JP("[\"car\",\"car\",\"cdr\",\"cdr\",\"cons\",\"cons\", \
+                  \"eq?\",\"eq?\",\"pair?\",\"pair?\"]");
 #ifndef EVAL
-  JSON_Value *mcelispjson = json_parse_file("./mcelisp.json");
-  JSON_Object *jsonobj = json_object(mcelispjson);
-  JSON_Array *mcelisp_a = json_object_get_array(jsonobj, "mcelisp");
-  JSON_Value *mcelisp = json_array_get_wrapping_value(mcelisp_a);
-  printf("%s\n", json_serialize_to_string(EVL(mcelisp, ienv)));
+  JV *mcelisp = JW(JG(JJ(JF("./mcelisp.json")), "mcelisp"));
+  printf("%s\n", JZ(EVL(mcelisp, ienv)));
 #else
-  JSON_Value *S = json_parse_string("   \
+  JV *S = JP("   \
   [[[\"lambda\",[\"U\"],[\"U\",\"U\"]], \
     [\"lambda\",[\"U\"],                \
    [\"lambda\",[\"X\",\"R\"],           \
@@ -136,10 +102,8 @@ int main(void)
        [\"else\",[[\"U\",\"U\"],[\"cdr\",\"X\"],[\"cons\",\"X\",\"R\"]]]]]]], \
   [\"quote\",[\"A\",\"A\",\"A\",\"A\",\"A\"]], \
   [\"quote\",[]]]");
-  printf("%s\n", json_serialize_to_string(EVL(S, ienv)));
+  printf("%s\n", JZ(EVL(S, ienv)));
   // => [["A"],["A","A"],["A","A","A"],["A","A","A","A"],["A","A","A","A","A"]]
 #endif
-
-  return (0);
-}
+  return (0); }
 

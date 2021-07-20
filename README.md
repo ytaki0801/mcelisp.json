@@ -56,6 +56,10 @@ $ ./JSON-to-S-Gauche.scm mcelisp.json mcelisp | chibi-scheme
 
 `mcelisp-json.c` is a reference implementation of `mcelisp.json` in C with JSON parser/serializer ["parson"](https://github.com/kgabis/parson/). You need the files `parson.c` and `parson.h` in the library to compile and run.
 
+## mcelisp-json-python3.py
+
+`mcelisp-json-python3.py` is a reference implementation of `mcelisp.json` to run on Python 3. It can run not only the above example but also `mcelisp.json` itself. See the source code for details.
+
 ## Licence
 
 The codes in this repository are licensed under [CC0](https://creativecommons.org/publicdomain/zero/1.0/).

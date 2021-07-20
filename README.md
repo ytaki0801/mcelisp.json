@@ -40,9 +40,9 @@ Note that list structure is not conscells but linked list. Lexical scope is supp
 
 `mcelisp-json-node.js` is a reference implementation of `mcelisp.json` to run on Node.js. It can run not only the above example but also `mcelisp.json` itself. See the source code for details.
 
-## mcelisp-json-pp.scm, JSON-to-S-Gauche.scm, S-to-JSON-Gauche.scm
+## JSON-to-S-Gauche.scm, S-to-JSON-Gauche.scm
 
-`mcelisp-json-pp.scm` is generated from `"mcelisp"` in `mcelisp.json` by using [Gauche](http://practical-scheme.net/gauche/)'s JSON library and slib's pretty-print, `JSON-to-S-Gauche.scm`. It can be executed on a Scheme interpreter as a Meta-Circular Evaluator.
+`JSON-to-S-Gauche.scm` is a simple JSON-to-S generator by using [Gauche](http://practical-scheme.net/gauche/)'s JSON library and slib's pretty-print. It can execute the `mcelisp.json` on a Scheme interpreter as a Meta-Circular Evaluator like the following.
 
 ```
 $ ./JSON-to-S-Gauche.scm mcelisp.json mcelisp | chibi-scheme
@@ -50,7 +50,29 @@ $ ./JSON-to-S-Gauche.scm mcelisp.json mcelisp | chibi-scheme
 > $
 ```
 
-`S-to-JSON-Gauche.scm` is a simple S-to-JSON generator by using Gauche's JSON library, same as `JSON-to-S-Gauche.scm`.
+`S-to-JSON-Gauche.scm` is a simple S-to-JSON generator by using Gauche's JSON library to generate sample JSON code like the following.
+
+```
+$ cat fib7.scm
+(((lambda (U) (U U))
+  (lambda (U)
+    (lambda (N A B)
+      (cond ((eq? N '()) '())
+            (else
+             (cons A ((U U) (cdr N) B
+                      (((lambda (M) (M M))
+                        (lambda (M)
+                          (lambda (X Y)
+                            (cond ((eq? X '()) Y)
+                                  (else
+                                   (cons (car X)
+                                         ((M M) (cdr X) Y)))))))
+                       A B))))))))
+ '(O O O O O O O O) '() '(O))
+$ ./S-to-JSON-Gauche.scm fib7.scm
+[[["lambda",["U"],["U","U"]],["lambda",["U"],["lambda",["N","A","B"],["cond",[["eq?","N",["quote",[]]],["quote",[]]],["else",["cons","A",[["U","U"],["cdr","N"],"B",[[["lambda",["M"],["M","M"]],["lambda",["M"],["lambda",["X","Y"],["cond",[["eq?","X",["quote",[]]],"Y"],["else",["cons",["car","X"],[["M","M"],["cdr","X"],"Y"]]]]]]],"A","B"]]]]]]]],["quote",["O","O","O","O","O","O","O","O"]],["quote",[]],["quote",["O"]]]
+$
+```
 
 ## mcelisp-json.c
 

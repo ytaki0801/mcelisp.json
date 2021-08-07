@@ -4,6 +4,7 @@
 (define (lists->vector L)
   (cond ((null? L) (list->vector L))
 	((pair? L) (list->vector (lists->vector-p L)))
+	((number? L) L)
 	(else (symbol->string L))))
 
 (define (lists->vector-p L)
